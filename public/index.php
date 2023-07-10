@@ -1,6 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
-// request is recieved
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+
+// request is received
 
 // perform some login
 
