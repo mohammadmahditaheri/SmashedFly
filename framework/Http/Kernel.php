@@ -2,7 +2,9 @@
 
 namespace MohammadMahdi\Framework\Http;
 
+use FastRoute\RouteCollector;
 use JetBrains\PhpStorm\Pure;
+use function FastRoute\simpleDispatcher;
 
 class Kernel
 {
@@ -26,11 +28,35 @@ class Kernel
     {
         $this->initRequest($request);
 
-        $content = '<h1>Hello from Kernel</h1>';
+//        $content = '<h1>Hello from Kernel</h1>';
+//
+//        $this->initResponse($content);
+//
+//        return $this->response();
 
-        $this->initResponse($content);
+        // Create a dispatcher
+        $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
+            $routeCollector->addRoute('GET', '/', function() {
+                $content = '<h1>Hello from Kernel</h1>';
+                $this->initResponse($content);
 
-        return $this->response();
+                return $this->response();
+            });
+
+            $routeCollector->addRoute('GET', '/posts/{id:\d+}', function ($routeParams) {
+                $content = "<h1>Hello from Kernel with params {$routeParams['id']}</h1>";
+
+                $this->initResponse($content);
+
+                return $this->response();
+            });
+        });
+
+        // Dispatch a Uri, to obtain the route info
+         [$routeStatus, $controller, $routeParams] = $dispatcher->dispatch($request->method(), $request->uri());
+
+        // Call the handler, provided by the route info, in order to create a response
+        return $controller($routeParams);
     }
 
     private function initRequest(Request $request): void
