@@ -11,10 +11,11 @@ class Kernel
     private static ?Kernel $kernelInstance = null;
     public ?Response $response;
     public ?Request $request;
-    
+
     private function __construct()
-    {}
-    
+    {
+    }
+
     public static function make(): self
     {
         if (self::$kernelInstance === null) {
@@ -28,43 +29,25 @@ class Kernel
     {
         $this->initRequest($request);
 
-//        $content = '<h1>Hello from Kernel</h1>';
-//
-//        $this->initResponse($content);
-//
-//        return $this->response();
-
         // Create a dispatcher
         $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
             $routes = include BASE_PATH . '/routes/web.php';
             foreach ($routes as $route) {
                 $routeCollector->addRoute(...$route);
             }
-
-//            $routeCollector->addRoute('GET', '/', function() {
-//                $content = '<h1>Hello from Kernel</h1>';
-//                $this->initResponse($content);
-//
-//                return $this->response();
-//            });
-//
-//            $routeCollector->addRoute('GET', '/posts/{id:\d+}', function ($routeParams) {
-//                $content = "<h1>This is post no {$routeParams['id']}</h1>";
-//
-//                $this->initResponse($content);
-//
-//                return $this->response();
-//            });
         });
 
         // Dispatch a Uri, to obtain the route info
-         [$routeStatus, $controller, $routeParams] = $dispatcher->dispatch(
-             $request->getMethod(),
-             $request->getUri()
-         );
+        $routeInfo = $dispatcher->dispatch(
+            $request->getMethod(),
+            $request->getUri()
+        );
+        [$routeStatus, [$controller, $method], $routeParams] = $routeInfo;
 
         // Call the handler, provided by the route info, in order to create a response
-        return $controller($routeParams);
+        $this->initResponse((new $controller())->$method($routeParams));
+
+        return $this->response;
     }
 
     private function initRequest(Request $request): void
@@ -72,9 +55,9 @@ class Kernel
         $this->request = $request;
     }
 
-    private function initResponse(string $content, $status = Response::HTTP_OK, $headers = []): void
+    private function initResponse(Response $response): void
     {
-        $this->response = new Response($content, $status, $headers);
+        $this->response = $response;
     }
 
     private function response(): Response|null
