@@ -2,9 +2,7 @@
 
 namespace MohammadMahdi\Framework\Http;
 
-use FastRoute\RouteCollector;
-use JetBrains\PhpStorm\Pure;
-use function FastRoute\simpleDispatcher;
+use MohammadMahdi\Framework\Http\Routing\Router;
 
 class Kernel
 {
@@ -30,24 +28,20 @@ class Kernel
         $this->initRequest($request);
 
         // Create a dispatcher
-        $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
-            $routes = include BASE_PATH . '/routes/web.php';
-            foreach ($routes as $route) {
-                $routeCollector->addRoute(...$route);
-            }
-        });
+        $routes = include BASE_PATH . '/routes/web.php';
+
+        // instantiate router to collect routes
+        $router = new Router($routes);
 
         // Dispatch a Uri, to obtain the route info
-        $routeInfo = $dispatcher->dispatch(
-            $request->getMethod(),
-            $request->getUri()
-        );
+        $routeInfo = $router->dispatch($request);
+
         [$routeStatus, [$controller, $method], $routeParams] = $routeInfo;
 
         // Call the handler, provided by the route info, in order to create a response
-        $this->initResponse((new $controller())->$method($routeParams));
+        $this->initResponse($this->callHandler($controller, $method, $routeParams));
 
-        return $this->response;
+        return $this->getResponse();
     }
 
     private function initRequest(Request $request): void
@@ -60,8 +54,13 @@ class Kernel
         $this->response = $response;
     }
 
-    private function response(): Response|null
+    private function getResponse(): Response|null
     {
         return $this->response;
+    }
+
+    private function callHandler($controller, $method, $routeParams): Response
+    {
+        return call_user_func_array([new $controller, $method], $routeParams);
     }
 }
