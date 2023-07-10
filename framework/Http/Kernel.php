@@ -36,20 +36,25 @@ class Kernel
 
         // Create a dispatcher
         $dispatcher = simpleDispatcher(function (RouteCollector $routeCollector) {
-            $routeCollector->addRoute('GET', '/', function() {
-                $content = '<h1>Hello from Kernel</h1>';
-                $this->initResponse($content);
+            $routes = include BASE_PATH . '/routes/web.php';
+            foreach ($routes as $route) {
+                $routeCollector->addRoute(...$route);
+            }
 
-                return $this->response();
-            });
-
-            $routeCollector->addRoute('GET', '/posts/{id:\d+}', function ($routeParams) {
-                $content = "<h1>This is post no {$routeParams['id']}</h1>";
-
-                $this->initResponse($content);
-
-                return $this->response();
-            });
+//            $routeCollector->addRoute('GET', '/', function() {
+//                $content = '<h1>Hello from Kernel</h1>';
+//                $this->initResponse($content);
+//
+//                return $this->response();
+//            });
+//
+//            $routeCollector->addRoute('GET', '/posts/{id:\d+}', function ($routeParams) {
+//                $content = "<h1>This is post no {$routeParams['id']}</h1>";
+//
+//                $this->initResponse($content);
+//
+//                return $this->response();
+//            });
         });
 
         // Dispatch a Uri, to obtain the route info

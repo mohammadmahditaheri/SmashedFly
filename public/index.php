@@ -3,7 +3,9 @@
 use MohammadMahdi\Framework\Http\Kernel;
 use MohammadMahdi\Framework\Http\Request;
 
-require_once dirname(__DIR__) . '/vendor/autoload.php';
+define('BASE_PATH', dirname(__DIR__));
+
+require_once BASE_PATH . '/vendor/autoload.php';
 
 // request is received
 $request = Request::createFromGlobals();
