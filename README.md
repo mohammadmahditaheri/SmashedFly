@@ -1,4 +1,4 @@
-# HttPHP
+# SmashedFly
 a simple and tiny HTTP framework for php
 
 The framework is consisted of these parts and features:
