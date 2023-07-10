@@ -3,6 +3,8 @@
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 // request is received
+$request = \MohammadMahdi\Framework\Http\Request::createFromGlobals();
+
 
 // perform some login
 
