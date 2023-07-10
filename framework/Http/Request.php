@@ -19,13 +19,13 @@ class Request
         return new static($_GET, $_POST, $_COOKIE, $_FILES, $_SERVER);
     }
 
-    public function method(): string
+    public function getMethod(): string
     {
         return $this->server['REQUEST_METHOD'];
     }
 
-    public function uri(): string
+    public function getUri(): string
     {
-        return $this->server['REQUEST_URI'];
+        return strtok($this->server['REQUEST_URI'], '?');
     }
 }

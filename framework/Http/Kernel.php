@@ -44,7 +44,7 @@ class Kernel
             });
 
             $routeCollector->addRoute('GET', '/posts/{id:\d+}', function ($routeParams) {
-                $content = "<h1>Hello from Kernel with params {$routeParams['id']}</h1>";
+                $content = "<h1>This is post no {$routeParams['id']}</h1>";
 
                 $this->initResponse($content);
 
@@ -53,7 +53,10 @@ class Kernel
         });
 
         // Dispatch a Uri, to obtain the route info
-         [$routeStatus, $controller, $routeParams] = $dispatcher->dispatch($request->method(), $request->uri());
+         [$routeStatus, $controller, $routeParams] = $dispatcher->dispatch(
+             $request->getMethod(),
+             $request->getUri()
+         );
 
         // Call the handler, provided by the route info, in order to create a response
         return $controller($routeParams);
