@@ -21,8 +21,11 @@ provides an intuitive object-oriented way for interacting with the actual respon
 handles routing in a fast manner powered by FastRoute.
 It also includes controllers and the actual route is being dispatched to the chosen method of the controller.
 
-... I may continue developing this tiny framework.
+... I may continue developing this tiny framework. 
 
+`
+This project is made for fun, and It's NOT suitable for production.
+`
 ## Credits
 inside this project the HTTP Foundation by Symfony is being used. for developing I used var-dumper by Symfony which is hugely useful in debugging. 
 And also for routing, FastRoute by N.Popov is the actual routing engine under the hood.
